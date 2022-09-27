@@ -1,28 +1,42 @@
 --task 1
-select name_album, year_release_album from album
-where date(year_release_album) >= '2018-01-01' and date(year_release_album) <= '2018-12-31';
+SELECT g.name_genre, count(ge.id_executor) FROM genre g
+JOIN  genre_executor ge ON g.uniqueid = ge.id_genre
+GROUP BY g.name_genre;
 
 --task 2
-select name_track, duration from track
-order by duration desc
-limit 1;
+select a.name_album, a.year_release_album, count(t.uniqueid) FROM album a
+JOIN track t ON a.uniqueid = t.id_album
+WHERE date(a.year_release_album) >= '2019-01-01' AND date(a.year_release_album)  <= '2020-01-01'
+GROUP BY a.name_album, a.year_release_album;
 
 --task 3
-select name_track from track
-where duration >= '00:03:30';
+SELECT  a.name_album, AVG(t.duration) FROM album a
+JOIN track t ON a.uniqueid = t.id_album
+GROUP BY a.name_album;
 
 --task 4
-select name_collection from collection
-where date(year_release_collection) >= '2018-01-01' and date(year_release_collection) <= '2020-12-31';
+SELECT e.name_executor, a.year_release_album FROM executor e
+JOIN album_executor ae ON e.uniqueid = ae.id_executor
+JOIN album a ON ae.id_album = a.uniqueid
+WHERE date(a.year_release_album) <= '2020-01-01' and date(a.year_release_album) >= '2020-12-31';
 
 --task 5
-select name_executor from executor
-where name_executor not like '% %';
+SELECT DISTINCT c.name_collection FROM collection c
+JOIN collection_track ct ON c.uniqueid = ct.id_collection
+JOIN track t ON ct.id_track = t.uniqueid
+JOIN album a ON t.id_album = a.uniqueid
+JOIN album_executor ae ON a.uniqueid = ae.id_album
+JOIN executor e ON ae.id_executor = e.uniqueid
+WHERE e.name_executor LIKE 'Drake';
 
 
 --task 6
-select name_track from track
-where name_track like '%My%';
+SELECT a.name_album FROM album a
+JOIN album_executor ae ON a.uniqueid = ae.id_album
+JOIN executor e ON ae.id_executor = e.uniqueid
+JOIN genre_executor ge ON e.uniqueid = ge.id_executor
+GROUP BY e.name_executor , a.name_album
+HAVING count(ge.id_genre) > 1;
 
 --task 7
 select name_track from track as t
